@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-ink: #1A1410;
+    --color-parchment: #F7F3EC;
+    --color-cream: #EDE6D8;
+    --color-amber: #C8956C;
+    --color-gold: #B8924F;
+    --color-copper: #A67C52;
+    --surface-primary: #FAF8F4;
+    --surface-secondary: #F0EBE1;
+    --surface-elevated: #FFFFFF;
+  }
+
+  * {
+    border-color: rgba(26, 20, 16, 0.08);
+  }
+
+  body {
+    @apply bg-surface-primary text-ink font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-ink;
+  }
+
+  ::selection {
+    background-color: rgba(200, 149, 108, 0.3);
+    color: #1A1410;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #F0EBE1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #C8956C;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #B57D4F;
+  }
+}
+
+@layer components {
+  /* Grain overlay for analog warmth */
+  .grain-overlay {
+    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.03];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Paper texture for cards */
+  .texture-paper {
+    @apply bg-surface-elevated;
+    background-image: url('/textures/paper.png');
+    background-blend-mode: multiply;
+  }
+
+  /* Vintage card style */
+  .card-vintage {
+    @apply bg-surface-elevated rounded-lg border border-cream shadow-warm;
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-vintage:hover {
+    @apply shadow-warm-lg -translate-y-0.5;
+  }
+
+  /* Vintage button */
+  .btn-vintage {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply font-ui font-semibold text-sm;
+    @apply bg-gradient-gold text-white;
+    @apply px-5 py-2.5 rounded-md;
+    @apply transition-all duration-300 ease-out;
+    @apply shadow-warm-sm;
+  }
+
+  .btn-vintage:hover {
+    @apply -translate-y-px shadow-glow-gold;
+  }
+
+  .btn-vintage:active {
+    @apply translate-y-0;
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply font-ui font-medium text-sm;
+    @apply bg-surface-secondary text-ink;
+    @apply px-5 py-2.5 rounded-md border border-cream;
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-cream shadow-warm-sm;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply font-ui font-medium text-sm;
+    @apply text-amber-600 hover:text-amber-700;
+    @apply px-4 py-2 rounded-md;
+    @apply transition-colors duration-200;
+  }
+
+  /* Input styles */
+  .input-vintage {
+    @apply w-full font-body text-base;
+    @apply bg-surface-elevated text-ink;
+    @apply px-4 py-3 rounded-md;
+    @apply border border-cream;
+    @apply shadow-warm-sm;
+    @apply transition-all duration-300;
+    @apply placeholder:text-amber-300;
+  }
+
+  .input-vintage:focus {
+    @apply outline-none border-amber-400 shadow-glow-amber;
+  }
+
+  /* Vintage divider */
+  .divider-vintage {
+    @apply w-full h-px bg-gradient-to-r from-transparent via-amber-200 to-transparent;
+  }
+
+  /* Waveform animation */
+  .waveform-bar {
+    @apply w-1 bg-amber-400 rounded-full;
+    animation: waveform 1.5s ease-in-out infinite;
+  }
+
+  /* Progress bar vintage */
+  .progress-vintage {
+    @apply h-2 bg-cream rounded-full overflow-hidden;
+  }
+
+  .progress-vintage-fill {
+    @apply h-full bg-gradient-gold rounded-full;
+    @apply transition-all duration-500 ease-out;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
+}

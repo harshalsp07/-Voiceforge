@@ -1,0 +1,6 @@
+# No docker-compose needed - everything runs on free tiers:
+# - Frontend: Vercel (free)
+# - Backend: Appwrite Cloud (free)
+# - Compute: Kaggle (free GPU)
+#
+# Just deploy to Vercel and use Appwrite Cloud!
