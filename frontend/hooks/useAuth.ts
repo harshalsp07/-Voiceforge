@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { account, ID, models } from '@/lib/appwrite';
+import { account, ID } from '@/lib/appwrite';
 
 export interface User {
   $id: string;
@@ -30,39 +30,34 @@ export function useAuth() {
   }, [checkAuth]);
 
   const login = async (email: string, password: string) => {
-    await account.createEmailPasswordSession({ email, password });
+    await account.createEmailPasswordSession(email, password);
     const currentUser = await account.get();
     setUser(currentUser as User);
     return currentUser;
   };
 
   const register = async (email: string, password: string, name: string) => {
-    await account.create({
-      userId: ID.unique(),
-      email,
-      password,
-      name,
-    });
+    await account.create(ID.unique(), email, password, name);
     return login(email, password);
   };
 
   const logout = async () => {
-    await account.deleteSession({ sessionId: 'current' });
+    await account.deleteSession('current');
     setUser(null);
   };
 
   const updateName = async (name: string) => {
-    await account.updateName({ name });
+    await account.updateName(name);
     setUser((prev) => (prev ? { ...prev, name } : null));
   };
 
   const updateEmail = async (email: string, password: string) => {
-    await account.updateEmail({ email, password });
+    await account.updateEmail(email, password);
     setUser((prev) => (prev ? { ...prev, email } : null));
   };
 
   const updatePassword = async (newPassword: string, oldPassword: string) => {
-    await account.updatePassword({ newPassword, oldPassword });
+    await account.updatePassword(newPassword, oldPassword);
   };
 
   return {

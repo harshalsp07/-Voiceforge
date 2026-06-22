@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { databases, storage, ID, Query, Permission, Role, DATABASE_ID, COLLECTIONS, BUCKETS } from '@/lib/appwrite';
+import { databases, storage, ID, Query, userPermissions, DATABASE_ID, COLLECTIONS, BUCKETS } from '@/lib/appwrite';
 
 export interface Audiobook {
   $id: string;
@@ -42,7 +42,7 @@ export function useAudiobooks(userId: string | undefined) {
         COLLECTIONS.audiobooks,
         [Query.equal('userId', userId), Query.orderDesc('$createdAt')]
       );
-      setAudiobooks(response.documents as Audiobook[]);
+      setAudiobooks(response.documents as unknown as Audiobook[]);
     } catch (error) {
       console.error('Failed to fetch audiobooks:', error);
     } finally {
@@ -67,7 +67,8 @@ export function useAudiobooks(userId: string | undefined) {
         voiceId,
         status: 'pending',
         totalDuration: 0,
-      }
+      },
+      userPermissions(userId)
     );
 
     setAudiobooks((prev) => [audiobook as unknown as Audiobook, ...prev]);
@@ -138,7 +139,7 @@ export function useChapters(audiobookId: string | undefined) {
           Query.orderAsc('chapterNumber'),
         ]
       );
-      setChapters(response.documents as Chapter[]);
+      setChapters(response.documents as unknown as Chapter[]);
     } catch (error) {
       console.error('Failed to fetch chapters:', error);
     } finally {

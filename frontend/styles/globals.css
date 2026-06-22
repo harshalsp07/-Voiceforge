@@ -21,6 +21,10 @@
     border-color: rgba(26, 20, 16, 0.08);
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-surface-primary text-ink font-body antialiased;
   }
@@ -35,7 +39,8 @@
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
@@ -43,46 +48,57 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #C8956C;
-    border-radius: 4px;
+    background: linear-gradient(180deg, #C8956C 0%, #B57D4F 100%);
+    border-radius: 5px;
+    border: 2px solid #F0EBE1;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #B57D4F;
+    background: linear-gradient(180deg, #B57D4F 0%, #9A6340 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
-  /* Grain overlay for analog warmth */
   .grain-overlay {
-    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.03];
+    @apply pointer-events-none fixed inset-0 z-[100] opacity-[0.03];
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
 
-  /* Paper texture for cards */
-  .texture-paper {
-    @apply bg-surface-elevated;
-    background-image: url('/textures/paper.png');
-    background-blend-mode: multiply;
+  .glass-warm {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40;
+    box-shadow: 0 8px 32px rgba(26, 20, 16, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
 
-  /* Vintage card style */
+  .glass-dark {
+    @apply bg-ink/80 backdrop-blur-xl border border-amber-900/20;
+  }
+
   .card-vintage {
     @apply bg-surface-elevated rounded-lg border border-cream shadow-warm;
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-300 ease-out-expo;
   }
 
   .card-vintage:hover {
     @apply shadow-warm-lg -translate-y-0.5;
   }
 
-  /* Vintage button */
   .btn-vintage {
     @apply inline-flex items-center justify-center gap-2;
     @apply font-ui font-semibold text-sm;
     @apply bg-gradient-gold text-white;
     @apply px-5 py-2.5 rounded-md;
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-300 ease-out-expo;
     @apply shadow-warm-sm;
   }
 
@@ -94,20 +110,18 @@
     @apply translate-y-0;
   }
 
-  /* Secondary button */
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2;
     @apply font-ui font-medium text-sm;
     @apply bg-surface-secondary text-ink;
     @apply px-5 py-2.5 rounded-md border border-cream;
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-300 ease-out-expo;
   }
 
   .btn-secondary:hover {
     @apply bg-cream shadow-warm-sm;
   }
 
-  /* Ghost button */
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2;
     @apply font-ui font-medium text-sm;
@@ -116,7 +130,6 @@
     @apply transition-colors duration-200;
   }
 
-  /* Input styles */
   .input-vintage {
     @apply w-full font-body text-base;
     @apply bg-surface-elevated text-ink;
@@ -131,25 +144,30 @@
     @apply outline-none border-amber-400 shadow-glow-amber;
   }
 
-  /* Vintage divider */
   .divider-vintage {
     @apply w-full h-px bg-gradient-to-r from-transparent via-amber-200 to-transparent;
   }
 
-  /* Waveform animation */
   .waveform-bar {
     @apply w-1 bg-amber-400 rounded-full;
     animation: waveform 1.5s ease-in-out infinite;
   }
 
-  /* Progress bar vintage */
   .progress-vintage {
     @apply h-2 bg-cream rounded-full overflow-hidden;
   }
 
   .progress-vintage-fill {
     @apply h-full bg-gradient-gold rounded-full;
-    @apply transition-all duration-500 ease-out;
+    @apply transition-all duration-500 ease-out-expo;
+  }
+
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-gold;
+  }
+
+  .skeleton-shimmer {
+    @apply bg-gradient-to-r from-cream via-amber-50 to-cream bg-[length:200%_100%] animate-shimmer;
   }
 }
 
@@ -158,23 +176,31 @@
     text-wrap: balance;
   }
 
-  .animate-delay-100 {
-    animation-delay: 100ms;
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-600 { animation-delay: 600ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+  .animate-delay-800 { animation-delay: 800ms; }
+
+  .transform-3d {
+    transform-style: preserve-3d;
   }
 
-  .animate-delay-200 {
-    animation-delay: 200ms;
+  .backface-hidden {
+    backface-visibility: hidden;
   }
 
-  .animate-delay-300 {
-    animation-delay: 300ms;
+  .perspective-1000 {
+    perspective: 1000px;
   }
 
-  .animate-delay-400 {
-    animation-delay: 400ms;
-  }
-
-  .animate-delay-500 {
-    animation-delay: 500ms;
+  .bg-grid-amber {
+    background-image:
+      linear-gradient(rgba(200, 149, 108, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200, 149, 108, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { databases, storage, ID, Query, Permission, Role, DATABASE_ID, COLLECTIONS, BUCKETS } from '@/lib/appwrite';
+import { databases, storage, ID, Query, Permission, Role, userPermissions, DATABASE_ID, COLLECTIONS, BUCKETS } from '@/lib/appwrite';
 
 export interface Book {
   $id: string;
@@ -31,7 +31,7 @@ export function useBooks(userId: string | undefined) {
         COLLECTIONS.books,
         [Query.equal('userId', userId), Query.orderDesc('$createdAt')]
       );
-      setBooks(response.documents as Book[]);
+      setBooks(response.documents as unknown as Book[]);
     } catch (error) {
       console.error('Failed to fetch books:', error);
     } finally {
@@ -69,7 +69,8 @@ export function useBooks(userId: string | undefined) {
         fileType: file.type.split('/').pop() || 'txt',
         fileId: uploadedFile.$id,
         totalChapters: 0,
-      }
+      },
+      userPermissions(userId)
     );
 
     setBooks((prev) => [book as unknown as Book, ...prev]);

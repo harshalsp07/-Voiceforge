@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { databases, ID, Query, Permission, Role, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite';
+import { databases, ID, Query, userPermissions, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite';
 
 export interface Video {
   $id: string;
@@ -32,7 +32,7 @@ export function useVideos(userId: string | undefined) {
         COLLECTIONS.videos,
         [Query.equal('userId', userId), Query.orderDesc('$createdAt')]
       );
-      setVideos(response.documents as Video[]);
+      setVideos(response.documents as unknown as Video[]);
     } catch (error) {
       console.error('Failed to fetch videos:', error);
     } finally {
@@ -64,7 +64,8 @@ export function useVideos(userId: string | undefined) {
         backgroundColor,
         videoFileId: '',
         status: 'pending',
-      }
+      },
+      userPermissions(userId)
     );
 
     setVideos((prev) => [video as unknown as Video, ...prev]);

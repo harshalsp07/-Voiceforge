@@ -237,6 +237,7 @@ async def health():
 from pyngrok import ngrok
 
 ngrok.kill()
+ngrok.set_auth_token(os.environ["NGROK_AUTH_TOKEN"])
 public_url = ngrok.connect(8889)
 print(f'\n========================================')
 print(f'  VoiceForge Engine URL:')

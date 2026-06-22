@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "description": "AI Audiobook Creation Platform",
+  "type": "module",
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
     "start": "cd frontend && npm start",
-    "lint": "cd frontend && npm run lint"
+    "lint": "cd frontend && npm run lint",
+    "setup-appwrite": "node scripts/setup-appwrite.mjs"
+  },
+  "devDependencies": {
+    "node-appwrite": "^17.0.0"
   }
 }

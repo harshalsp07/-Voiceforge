@@ -1,7 +1,8 @@
 'use client';
 
-import { BookOpen, Github, Twitter } from 'lucide-react';
+import { Github, Twitter } from 'lucide-react';
 import Link from 'next/link';
+import { Brand } from '@/components/layout/brand';
 
 export function Footer() {
   return (
@@ -9,12 +10,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-gold">
-                <BookOpen className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-display text-lg font-bold text-ink">VoiceForge</span>
-            </Link>
+            <Brand size="sm" href="/" className="mb-4" />
             <p className="text-sm text-copper-600 font-body">
               Transform books into immersive audiobooks with AI voice cloning.
             </p>

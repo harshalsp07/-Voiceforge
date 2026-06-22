@@ -1,0 +1,16 @@
+{
+  "name": "VoiceForge - AI Audiobook Creation",
+  "short_name": "VoiceForge",
+  "description": "Transform books into immersive audiobooks with voice cloning and captioned videos.",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#C8956C",
+  "background_color": "#FAF8F4",
+  "display": "standalone",
+  "start_url": "/"
+}

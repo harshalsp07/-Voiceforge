@@ -1,11 +1,15 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Play, Pause, Download, Settings, Mic, BookOpen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Play, Pause, Download, Settings, Mic, BookOpen, CheckCircle2, Loader2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { WaveformVisualizer } from '@/components/audio/waveform-visualizer';
+import { StaggerContainer, StaggerItem } from '@/components/animations/stagger';
+import { cn } from '@/lib/utils';
 
 const mockBook = {
   id: '1',
@@ -20,8 +24,63 @@ const mockBook = {
   ],
 };
 
+const captionText = 'In my younger and more vulnerable age my father gave me some advice that I have been turning over in my mind ever since. Whenever you feel like criticizing anyone, just remember that all the people in this world have not had the advantages that you have had.';
+
+const speedOptions = ['0.75x', '1.0x', '1.25x', '1.5x'];
+
+function StatusBadge({ status }: { status: string }) {
+  if (status === 'completed') {
+    return (
+      <Badge variant="success" className="gap-1">
+        <CheckCircle2 className="h-3 w-3" />
+        completed
+      </Badge>
+    );
+  }
+  if (status === 'processing') {
+    return (
+      <Badge variant="warning" className="gap-1">
+        <span className="flex gap-0.5">
+          {[0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+              className="h-1 w-1 rounded-full bg-yellow-700"
+            />
+          ))}
+        </span>
+        processing
+      </Badge>
+    );
+  }
+  return <Badge variant="default">pending</Badge>;
+}
+
 export default function AudiobookEditorPage() {
   const params = useParams();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(35);
+  const [activeChapter, setActiveChapter] = useState(1);
+  const [speed, setSpeed] = useState('1.0x');
+  const [currentWord, setCurrentWord] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const words = captionText.split(' ');
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const wordInterval = setInterval(() => {
+      setCurrentWord((prev) => (prev + 1) % words.length);
+    }, 400 / parseFloat(speed));
+    return () => clearInterval(wordInterval);
+  }, [isPlaying, speed, words.length]);
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = progressRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const percent = ((e.clientX - rect.left) / rect.width) * 100;
+    setProgress(Math.max(0, Math.min(100, percent)));
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -57,27 +116,37 @@ export default function AudiobookEditorPage() {
                 Chapters
               </h3>
             </div>
-            <div className="divide-y divide-cream/50">
+            <StaggerContainer className="divide-y divide-cream/50">
               {mockBook.chapters.map((chapter) => (
-                <button
-                  key={chapter.id}
-                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-amber-50/30 transition-colors text-left"
-                >
-                  <div>
-                    <p className="font-ui text-sm font-medium text-ink">{chapter.title}</p>
-                    <p className="text-xs font-ui text-copper-400 mt-0.5">{chapter.duration}</p>
-                  </div>
-                  <Badge
-                    variant={
-                      chapter.status === 'completed' ? 'success' :
-                      chapter.status === 'processing' ? 'warning' : 'default'
-                    }
+                <StaggerItem key={chapter.id}>
+                  <button
+                    onClick={() => setActiveChapter(chapter.id)}
+                    className={cn(
+                      'w-full px-4 py-3 flex items-center justify-between transition-colors text-left relative',
+                      activeChapter === chapter.id
+                        ? 'bg-amber-50/50'
+                        : 'hover:bg-amber-50/30'
+                    )}
                   >
-                    {chapter.status}
-                  </Badge>
-                </button>
+                    {activeChapter === chapter.id && (
+                      <motion.div
+                        layoutId="active-chapter"
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-gold rounded-r-full"
+                        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                    <div>
+                      <p className="font-ui text-sm font-medium text-ink">{chapter.title}</p>
+                      <p className="text-xs font-ui text-copper-400 mt-0.5 flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {chapter.duration}
+                      </p>
+                    </div>
+                    <StatusBadge status={chapter.status} />
+                  </button>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </div>
 
@@ -86,16 +155,53 @@ export default function AudiobookEditorPage() {
           <div className="card-vintage overflow-hidden">
             <div className="p-6 border-b border-cream/50">
               <div className="flex items-center gap-4">
-                <button className="h-14 w-14 rounded-xl bg-gradient-gold flex items-center justify-center shadow-glow-amber hover:scale-105 transition-transform">
-                  <Play className="h-6 w-6 text-white ml-0.5" />
-                </button>
+                <motion.button
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="h-14 w-14 rounded-xl bg-gradient-gold flex items-center justify-center shadow-glow-amber"
+                >
+                  <AnimatePresence mode="wait">
+                    {isPlaying ? (
+                      <motion.div
+                        key="pause"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                      >
+                        <Pause className="h-6 w-6 text-white" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="play"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                      >
+                        <Play className="h-6 w-6 text-white ml-0.5" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
                 <div className="flex-1">
-                  <p className="font-display text-lg font-semibold text-ink">Chapter 1</p>
-                  <div className="progress-vintage mt-2">
-                    <div className="progress-vintage-fill" style={{ width: '35%' }} />
+                  <p className="font-display text-lg font-semibold text-ink">
+                    Chapter {activeChapter}
+                  </p>
+                  <div
+                    ref={progressRef}
+                    onClick={handleSeek}
+                    className="progress-vintage mt-2 cursor-pointer"
+                  >
+                    <motion.div
+                      className="progress-vintage-fill"
+                      animate={{ width: `${progress}%` }}
+                      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+                    />
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-xs font-mono text-copper-400">1:24</span>
+                    <span className="text-xs font-mono text-copper-400">
+                      {Math.floor(progress * 0.039)}:{String(Math.floor((progress * 2.34) % 60)).padStart(2, '0')}
+                    </span>
                     <span className="text-xs font-mono text-copper-400">3:52</span>
                   </div>
                 </div>
@@ -103,12 +209,25 @@ export default function AudiobookEditorPage() {
             </div>
 
             <div className="p-6">
-              <WaveformVisualizer bars={64} className="h-16 mb-6" />
-              
+              <WaveformVisualizer bars={64} className="h-16 mb-6" isPlaying={isPlaying} />
+
               <div className="bg-ink rounded-xl p-5">
-                <p className="font-mono text-sm text-amber-200/80 leading-relaxed">
-                  In my younger and more vulnerable age my father gave me some advice that I&apos;ve been turning over in my mind ever since.
-                  &ldquo;Whenever you feel like criticizing anyone,&rdquo; he told me, &ldquo;just remember that all the people in this world haven&apos;t had the advantages that you&apos;ve had.&rdquo;
+                <p className="font-mono text-sm leading-relaxed">
+                  {words.map((word, i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        'transition-colors duration-200',
+                        i === currentWord && isPlaying
+                          ? 'text-amber-400 bg-amber-400/20 px-1 rounded'
+                          : i < currentWord && isPlaying
+                          ? 'text-amber-200/40'
+                          : 'text-amber-200/80'
+                      )}
+                    >
+                      {word}{' '}
+                    </span>
+                  ))}
                 </p>
               </div>
 
@@ -122,10 +241,20 @@ export default function AudiobookEditorPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-ui text-copper-400">Speed:</span>
-                  <Button variant="ghost" size="sm" className="font-mono text-xs">0.75x</Button>
-                  <Button variant="ghost" size="sm" className="font-mono text-xs bg-amber-100">1.0x</Button>
-                  <Button variant="ghost" size="sm" className="font-mono text-xs">1.25x</Button>
-                  <Button variant="ghost" size="sm" className="font-mono text-xs">1.5x</Button>
+                  {speedOptions.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setSpeed(s)}
+                      className={cn(
+                        'px-2.5 py-1 rounded-md font-mono text-xs transition-all',
+                        speed === s
+                          ? 'bg-amber-100 text-amber-700 font-medium'
+                          : 'text-copper-400 hover:text-ink hover:bg-surface-secondary'
+                      )}
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

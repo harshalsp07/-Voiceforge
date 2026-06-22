@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { databases, storage, ID, Query, Permission, Role, DATABASE_ID, COLLECTIONS, BUCKETS } from '@/lib/appwrite';
+import { databases, storage, ID, Query, Permission, Role, userPermissions, DATABASE_ID, COLLECTIONS, BUCKETS } from '@/lib/appwrite';
 
 export interface Voice {
   $id: string;
@@ -29,7 +29,7 @@ export function useVoices(userId: string | undefined) {
         COLLECTIONS.voices,
         [Query.equal('userId', userId), Query.orderDesc('$createdAt')]
       );
-      setVoices(response.documents as Voice[]);
+      setVoices(response.documents as unknown as Voice[]);
     } catch (error) {
       console.error('Failed to fetch voices:', error);
     } finally {
@@ -65,7 +65,8 @@ export function useVoices(userId: string | undefined) {
         name,
         audioFileId: uploadedFile.$id,
         voiceTokens: JSON.stringify({ status: 'pending' }),
-      }
+      },
+      userPermissions(userId)
     );
 
     setVoices((prev) => [voice as unknown as Voice, ...prev]);

@@ -1,20 +1,18 @@
-import { Client, Account, Databases, Storage, Functions } from 'appwrite';
+import { Client, Account, Databases, Storage, Functions, ID, Permission, Role, Query } from 'appwrite';
 
-const client = new Client();
+const client = new Client()
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://sgp.cloud.appwrite.io/v1')
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6a381e4c0004226eb0dd');
 
-client
-  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
-  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
+const account = new Account(client);
+const databases = new Databases(client);
+const storage = new Storage(client);
+const functions = new Functions(client);
 
-export const account = new Account(client);
-export const databases = new Databases(client);
-export const storage = new Storage(client);
-export const functions = new Functions(client);
+export { client, account, databases, storage, functions, ID, Permission, Role, Query };
 
-export { client, ID, Permission, Role, Query } from 'appwrite';
+export const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'voiceforge-db';
 
-// Database and Collection IDs
-export const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '';
 export const COLLECTIONS = {
   books: process.env.NEXT_PUBLIC_APPWRITE_BOOKS_COLLECTION || 'books',
   voices: process.env.NEXT_PUBLIC_APPWRITE_VOICES_COLLECTION || 'voices',
@@ -24,7 +22,6 @@ export const COLLECTIONS = {
   llmProviders: process.env.NEXT_PUBLIC_APPWRITE_LLM_COLLECTION || 'llm_providers',
 };
 
-// Storage Bucket IDs
 export const BUCKETS = {
   books: process.env.NEXT_PUBLIC_APPWRITE_BOOKS_BUCKET || 'books',
   voices: process.env.NEXT_PUBLIC_APPWRITE_VOICES_BUCKET || 'voices',
@@ -32,17 +29,22 @@ export const BUCKETS = {
   videos: process.env.NEXT_PUBLIC_APPWRITE_VIDEOS_BUCKET || 'videos',
 };
 
-// Helper to get file preview URL
+export function userPermissions(userId: string) {
+  return [
+    Permission.read(Role.user(userId)),
+    Permission.update(Role.user(userId)),
+    Permission.delete(Role.user(userId)),
+  ];
+}
+
 export function getFilePreview(bucketId: string, fileId: string): string {
   return storage.getFilePreview(bucketId, fileId);
 }
 
-// Helper to get file download URL
 export function getFileDownload(bucketId: string, fileId: string): string {
   return storage.getFileDownload(bucketId, fileId);
 }
 
-// Helper to get file view URL
 export function getFileView(bucketId: string, fileId: string): string {
   return storage.getFileView(bucketId, fileId);
 }

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C8956C"/>
+      <stop offset="50%" stop-color="#B8924F"/>
+      <stop offset="100%" stop-color="#A67C52"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FBF4EE"/>
+      <stop offset="100%" stop-color="#F5E5D5"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <g transform="translate(256 256)">
+    <g transform="translate(0 -40)">
+      <path d="M -70 -45 Q -70 -55 -60 -55 L -15 -55 Q 0 -55 0 -45 L 0 45 Q 0 55 -15 55 L -60 55 Q -70 55 -70 45 Z" fill="#fff" opacity="0.95"/>
+      <path d="M 70 -45 Q 70 -55 60 -55 L 15 -55 Q 0 -55 0 -45 L 0 45 Q 0 55 15 55 L 60 55 Q 70 55 70 45 Z" fill="#fff" opacity="0.85"/>
+      <line x1="0" y1="-55" x2="0" y2="55" stroke="#C8956C" stroke-width="2.5"/>
+    </g>
+    <g transform="translate(0 75)">
+      <rect x="-45" y="-4" width="8" height="8" rx="4" fill="url(#wave)" opacity="0.5"/>
+      <rect x="-30" y="-10" width="8" height="20" rx="4" fill="url(#wave)" opacity="0.7"/>
+      <rect x="-15" y="-16" width="8" height="32" rx="4" fill="url(#wave)" opacity="0.9"/>
+      <rect x="0" y="-12" width="8" height="24" rx="4" fill="url(#wave)" opacity="0.8"/>
+      <rect x="15" y="-7" width="8" height="14" rx="4" fill="url(#wave)" opacity="0.6"/>
+      <rect x="30" y="-3" width="8" height="6" rx="3" fill="url(#wave)" opacity="0.4"/>
+    </g>
+  </g>
+</svg>
